@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "parry_this",
+  "version": "${version}",
+
+  "name": "Parry",
+  "description": "no way",
+  "authors": ["Progames723"],
+  "contact": {},
+
+  "license": "GNU GPL 3.0",
+  "icon": "icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "dev.progames723.parry.fabric.ParryFabric"
+    ]
+  },
+  "mixins": [
+    "parry_this.mixins.json",
+    "parry_this-common.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.15.6",
+    "minecraft": ">=1.20.2"
+  }
+}
