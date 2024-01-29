@@ -18,8 +18,10 @@ public class Calculations {
 		}
 		return (float) finalDamage;
 	}
-	public static float ifArmorPenetrationIsHigherThan100Percent(float damage, double armorPenetration){
-		double finalDamage = Math.pow(((damage * armorPenetration)/100), 1.01); //((damage*armorPenetration)/100)^1.01
-		return (float) finalDamage;
+	public static double ifArmorPenetrationIsHigherThan100Percent(float damage, double armorPenetration){
+		if (armorPenetration > 200.0){
+			armorPenetration = 200.0;
+		}
+		return Math.pow(((damage * armorPenetration)/100), 1.045)+(damage*0.01f);
 	}
 }

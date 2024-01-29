@@ -1,74 +1,127 @@
 package dev.progames723.parry;
 
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
+public class Variables{
+	public static String perfectParry = "perfect_parry";//boolean
+	public static String parry = "parry";//boolean
+	public static String lateParry = "late_parry";//boolean
+	public static String parryTicks = "parry_ticks";//int
+	public static String resistant = "resistant";//double
+	public static String vulnerable = "vulnerable";//double
+	public static String insaneNumber = "insane_number";//double, combination of resistant and vulnerable with (vulnerable - resistant)
+	public static String isNew = "is_new";//boolean
 
-public class Variables {
-	public static HashMap<Player, Boolean> perfectParry = new HashMap<>();
-	public static HashMap<Player, Boolean> parry = new HashMap<>();
-	public static HashMap<Player, Boolean> lateParry = new HashMap<>();
-	public static HashMap<Player, Integer> parryTicks = new HashMap<>();
-	public static HashMap<Player, Runnable> theH = new HashMap<>();
-	public static HashMap<Player, Double> resistant = new HashMap<>();
-	public static HashMap<Player, Double> vulnerable = new HashMap<>();
-	public static void changeHashmapValues(Player player){
-		Variables.vulnerable.putIfAbsent(player, 0.0);
-		Variables.resistant.putIfAbsent(player, 0.0);
-		if (Variables.vulnerable.get(player) != null && Variables.resistant.get(player) != null){
-			if (resistant.get(player) > 100.0){
-				resistant.put(player, 100.0);
-			}
-			if (resistant.get(player) < 0.0){
-				resistant.put(player, 0.0);
-			}
-			if (vulnerable.get(player) < 0.0){
-				vulnerable.put(player, 0.0);
-			}
+	public static void changeValues(Player player){
+		CompoundTag nbt = thisIsImportant(player);
+		if (nbt.getDouble(resistant) > 100.0){
+			nbt.putDouble(resistant, 100.0);
 		}
+		if (nbt.getDouble(resistant) < 0.0){
+			nbt.putDouble(resistant, 0.0);
+		}
+		if (nbt.getDouble(vulnerable) < 0.0){
+			nbt.putDouble(vulnerable, 0.0);
+		}
+		if (nbt.getDouble(insaneNumber) > 200.0+nbt.getDouble(vulnerable)){
+			nbt.putDouble(insaneNumber, 200.0+nbt.getDouble(vulnerable));
+		}
+		if (nbt.getDouble(insaneNumber) < -100.0){
+			nbt.putDouble(insaneNumber, -100.0);
+		}
+		nbt.putDouble(insaneNumber, nbt.getDouble(vulnerable)-nbt.getDouble(resistant));
 	}
 	public static void parryTick(Player player){
-		Variables.vulnerable.putIfAbsent(player, 0.0);
-		Variables.resistant.putIfAbsent(player, 0.0);
-		if (Variables.vulnerable.get(player) != null && Variables.resistant.get(player) != null){
-			int h = parryTicks.get(player);
-			if (h <= 0){
-				if (theH.get(player) != null){
-					theH.get(player).run();
+		CompoundTag nbt = thisIsImportant(player);
+		int h = nbt.getInt(Variables.parryTicks);
+		if (h < 0){
+			nbt.putInt(Variables.parryTicks, 0);
+		} else {
+			if (nbt.getBoolean(Variables.perfectParry) &&
+					!nbt.getBoolean(Variables.parry) &&
+					!nbt.getBoolean(Variables.lateParry)){
+				if (h > 1 && h <= 3){
+					h--;
+					nbt.putInt(Variables.parryTicks, h);
 				} else {
-					return;
+					nbt.putInt(Variables.parryTicks, 8);
+					nbt.putBoolean(Variables.perfectParry, false);
+					nbt.putBoolean(Variables.parry, true);
+					nbt.putBoolean(Variables.lateParry, false);
 				}
-				theH.put(player, null);
-			} else {
-				parryTicks.put(player, h-1);
+			} else if ((!nbt.getBoolean(Variables.perfectParry) &&
+					nbt.getBoolean(Variables.parry) &&
+					!nbt.getBoolean(Variables.lateParry))) {
+				if (h > 1 && h <= 8){
+					h--;
+					nbt.putInt(Variables.parryTicks, h);
+				} else {
+					nbt.putInt(Variables.parryTicks, 9);
+					nbt.putBoolean(Variables.perfectParry, false);
+					nbt.putBoolean(Variables.parry, false);
+					nbt.putBoolean(Variables.lateParry, true);
+				}
+			} else if ((!nbt.getBoolean(Variables.perfectParry) &&
+					!nbt.getBoolean(Variables.parry) &&
+					nbt.getBoolean(Variables.lateParry))) {
+				if (h > 1 && h <= 9){
+					h--;
+					nbt.putInt(Variables.parryTicks, h);
+				} else {
+					nbt.putInt(Variables.parryTicks, 0);
+					nbt.putBoolean(Variables.perfectParry, false);
+					nbt.putBoolean(Variables.parry, false);
+					nbt.putBoolean(Variables.lateParry, false);
+				}
 			}
 		}
 	}
+	public static CompoundTag thisIsImportant(Player player){
+		EntityDataSaver w = (EntityDataSaver) player;
+		return w.getPersistentData();
+	}
+	public static void revokeVariablesOnExit(Player player){
+		CompoundTag nbt = thisIsImportant(player);
+		if (nbt.getBoolean(perfectParry) || nbt.getBoolean(parry) || nbt.getBoolean(lateParry)){
+			nbt.putBoolean(perfectParry, false);
+			nbt.putBoolean(parry, false);
+			nbt.putBoolean(lateParry, false);
+		}
+		if (nbt.getInt(parryTicks) != 0){
+			nbt.putInt(parryTicks, 0);
+		}
+	}
+	public static void initializeVar(Player player){
+		CompoundTag nbt = thisIsImportant(player);
+		if (!nbt.getBoolean((isNew))){
+			nbt.putInt(parryTicks, 0);
+			nbt.putBoolean(perfectParry, false);
+			nbt.putBoolean(parry, false);
+			nbt.putBoolean(lateParry, false);
+			nbt.putDouble(vulnerable, 0.0);
+			nbt.putDouble(resistant, 0.0);
+			nbt.putBoolean(isNew, true);
+		}
+	}
+	public static void initializeVar(Player player, boolean override){
+		CompoundTag nbt = thisIsImportant(player);
+		if (!nbt.getBoolean((isNew)) || override){
+			nbt.putInt(parryTicks, 0);
+			nbt.putBoolean(perfectParry, false);
+			nbt.putBoolean(parry, false);
+			nbt.putBoolean(lateParry, false);
+			nbt.putDouble(vulnerable, 0.0);
+			nbt.putDouble(resistant, 0.0);
+			nbt.putBoolean(isNew, true);
+		}
+	}
+
 	public static void setTicks(Player player){
-		parryTicks.put(player, 3);
-		perfectParry.put(player, true);
-		parry.put(player, false);
-		lateParry.put(player, false);
-
-		theH.put(player, () -> {
-			perfectParry.put(player, false);
-			parry.put(player, true);
-			lateParry.put(player, false);
-			parryTicks.put(player, 8);
-
-			theH.put(player, () -> {
-				perfectParry.put(player, false);
-				parry.put(player, false);
-				lateParry.put(player, true);
-				parryTicks.put(player, 9);
-
-				theH.put(player, () -> {
-					perfectParry.put(player, false);
-					parry.put(player, false);
-					lateParry.put(player, false);
-				});
-			});
-		});
+		CompoundTag nbt = thisIsImportant(player);
+		nbt.putInt(parryTicks, 3);
+		nbt.putBoolean(perfectParry, true);
+		nbt.putBoolean(parry, false);
+		nbt.putBoolean(lateParry, false);
 	}
 }

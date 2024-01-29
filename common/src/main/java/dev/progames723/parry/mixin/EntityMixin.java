@@ -23,14 +23,14 @@ public abstract class EntityMixin implements EntityDataSaver {
 	@Inject(method = "saveWithoutId", at = @At("HEAD"))
 	protected void injectWriteMethod(CompoundTag nbt, CallbackInfoReturnable info) {
 		if(persistentData != null) {
-			nbt.put("parry.data", persistentData);
+			nbt.put("parry_data", persistentData);
 		}
 	}
 
 	@Inject(method = "load", at = @At("HEAD"))
 	protected void injectReadMethod(CompoundTag nbt, CallbackInfo info) {
-		if (nbt.contains("parry.data", 10)) {
-			persistentData = nbt.getCompound("parry.data");
+		if (nbt.contains("parry_data", 10)) {
+			persistentData = nbt.getCompound("parry_data");
 		}
 	}
 }

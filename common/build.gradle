@@ -6,7 +6,7 @@ dependencies {
     modApi "dev.architectury:architectury:${rootProject.architectury_version}"
 
     //my mod api
-    api "dev.progames723:hmmm-fabric:0.1"
+    api "dev.progames723:hmmm-fabric:0.2"
 }
 
 architectury {
