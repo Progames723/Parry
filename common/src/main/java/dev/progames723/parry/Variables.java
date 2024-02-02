@@ -4,6 +4,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 
 public class Variables{
+	protected Variables() {}
 	public static String perfectParry = "perfect_parry";//boolean
 	public static String parry = "parry";//boolean
 	public static String lateParry = "late_parry";//boolean
@@ -32,47 +33,47 @@ public class Variables{
 		}
 		nbt.putDouble(insaneNumber, nbt.getDouble(vulnerable)-nbt.getDouble(resistant));
 	}
-	public static void parryTick(Player player){
+	public static void parryTick(Player player){//TODO make less hardcoded
 		CompoundTag nbt = thisIsImportant(player);
-		int h = nbt.getInt(Variables.parryTicks);
+		int h = nbt.getInt(parryTicks);
 		if (h < 0){
-			nbt.putInt(Variables.parryTicks, 0);
+			nbt.putInt(parryTicks, 0);
 		} else {
-			if (nbt.getBoolean(Variables.perfectParry) &&
-					!nbt.getBoolean(Variables.parry) &&
-					!nbt.getBoolean(Variables.lateParry)){
+			if (nbt.getBoolean(perfectParry) &&
+					!nbt.getBoolean(parry) &&
+					!nbt.getBoolean(lateParry)){
 				if (h > 1 && h <= 3){
 					h--;
-					nbt.putInt(Variables.parryTicks, h);
+					nbt.putInt(parryTicks, h);
 				} else {
-					nbt.putInt(Variables.parryTicks, 8);
-					nbt.putBoolean(Variables.perfectParry, false);
-					nbt.putBoolean(Variables.parry, true);
-					nbt.putBoolean(Variables.lateParry, false);
+					nbt.putInt(parryTicks, 8);
+					nbt.putBoolean(perfectParry, false);
+					nbt.putBoolean(parry, true);
+					nbt.putBoolean(lateParry, false);
 				}
-			} else if ((!nbt.getBoolean(Variables.perfectParry) &&
-					nbt.getBoolean(Variables.parry) &&
-					!nbt.getBoolean(Variables.lateParry))) {
+			} else if ((!nbt.getBoolean(perfectParry) &&
+					nbt.getBoolean(parry) &&
+					!nbt.getBoolean(lateParry))) {
 				if (h > 1 && h <= 8){
 					h--;
-					nbt.putInt(Variables.parryTicks, h);
+					nbt.putInt(parryTicks, h);
 				} else {
-					nbt.putInt(Variables.parryTicks, 9);
-					nbt.putBoolean(Variables.perfectParry, false);
-					nbt.putBoolean(Variables.parry, false);
-					nbt.putBoolean(Variables.lateParry, true);
+					nbt.putInt(parryTicks, 9);
+					nbt.putBoolean(perfectParry, false);
+					nbt.putBoolean(parry, false);
+					nbt.putBoolean(lateParry, true);
 				}
-			} else if ((!nbt.getBoolean(Variables.perfectParry) &&
-					!nbt.getBoolean(Variables.parry) &&
-					nbt.getBoolean(Variables.lateParry))) {
+			} else if ((!nbt.getBoolean(perfectParry) &&
+					!nbt.getBoolean(parry) &&
+					nbt.getBoolean(lateParry))) {
 				if (h > 1 && h <= 9){
 					h--;
-					nbt.putInt(Variables.parryTicks, h);
+					nbt.putInt(parryTicks, h);
 				} else {
-					nbt.putInt(Variables.parryTicks, 0);
-					nbt.putBoolean(Variables.perfectParry, false);
-					nbt.putBoolean(Variables.parry, false);
-					nbt.putBoolean(Variables.lateParry, false);
+					nbt.putInt(parryTicks, 0);
+					nbt.putBoolean(perfectParry, false);
+					nbt.putBoolean(parry, false);
+					nbt.putBoolean(lateParry, false);
 				}
 			}
 		}
@@ -81,6 +82,7 @@ public class Variables{
 		EntityDataSaver w = (EntityDataSaver) player;
 		return w.getPersistentData();
 	}
+	@Deprecated(forRemoval = true)//deprecated because variables are persistent enough so this is unnecessary
 	public static void revokeVariablesOnExit(Player player){
 		CompoundTag nbt = thisIsImportant(player);
 		if (nbt.getBoolean(perfectParry) || nbt.getBoolean(parry) || nbt.getBoolean(lateParry)){
@@ -117,7 +119,7 @@ public class Variables{
 		}
 	}
 
-	public static void setTicks(Player player){
+	public static void setTicks(Player player){//TODO make less hardcoded
 		CompoundTag nbt = thisIsImportant(player);
 		nbt.putInt(parryTicks, 3);
 		nbt.putBoolean(perfectParry, true);

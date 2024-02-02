@@ -22,7 +22,7 @@ dependencies {
     modApi "dev.architectury:architectury-fabric:${rootProject.architectury_version}"
 
     //my mod api
-    modApi "dev.progames723:hmmm-fabric:0.2"
+    modApi "dev.progames723:hmmm-fabric:0.3"
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }

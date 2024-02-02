@@ -20,7 +20,7 @@ dependencies {
     modApi "dev.architectury:architectury-forge:${rootProject.architectury_version}"
 
     //my mod api
-    api "dev.progames723:hmmm-forge:0.2"
+    modApi "dev.progames723:hmmm-forge:0.3"
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
