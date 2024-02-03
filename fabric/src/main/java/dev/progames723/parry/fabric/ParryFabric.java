@@ -27,8 +27,8 @@ public class ParryFabric implements ModInitializer {
         LivingEvents.BEFORE_LIVING_HURT.register((level, entity, source, amount) -> {
             if (entity instanceof Player player){
                 CompoundTag nbt = Variables.thisIsImportant(player);
-                if (!Objects.equals(source, DamageSourceSomething.of(level, HmmmDamageTypes.PIERCING, null, null)) &&
-                        !Objects.equals(source, DamageSourceSomething.of(level, HmmmDamageTypes.BLEED, null, null))){
+                if (!Objects.equals(source, DamageSourceSomething.of(level, HmmmDamageTypes.PIERCING, source.getDirectEntity(), source.getEntity())) &&
+                        !Objects.equals(source, DamageSourceSomething.of(level, HmmmDamageTypes.BLEED, source.getDirectEntity(), source.getEntity()))){
                     if (!nbt.getBoolean(Variables.perfectParry) &&
                             nbt.getBoolean(Variables.parry) &&
                             !nbt.getBoolean(Variables.lateParry)){
@@ -85,7 +85,6 @@ public class ParryFabric implements ModInitializer {
                                         !item2.is(ConventionalItemTags.SPEARS) &&
                                         !item2.is(ItemTags.SWORDS)
                         ){
-                            player.getCooldowns().addCooldown(item, 20);
                             Variables.setTicks(player);
                             level.playSound(null, player.getOnPos(), SoundEvents.ARMOR_EQUIP_LEATHER, SoundSource.MASTER, 1, 1);
                         }

@@ -45,7 +45,6 @@ public class EventHandler{
 							!item2.is(Tags.Items.TOOLS_TRIDENTS) &&
 							!item2.is(ItemTags.SWORDS)
 					){
-						player.getCooldowns().addCooldown(item, 20);
 						level.playSound(null, player.getOnPos(), SoundEvents.ARMOR_EQUIP_LEATHER, SoundSource.MASTER, 1, 1);
 						Variables.setTicks(player);
 					}
@@ -63,7 +62,7 @@ public class EventHandler{
 			Level level = player.level();
 			CompoundTag nbt = Variables.thisIsImportant(player);
 			//you can still parry BLEED but not PIERCING
-			if (!Objects.equals(source, DamageSourceSomething.of(level, HmmmDamageTypes.PIERCING, null, null))){
+			if (!Objects.equals(source, DamageSourceSomething.of(level, HmmmDamageTypes.PIERCING, source.getDirectEntity(), source.getEntity()))){
 				if (nbt.getBoolean(Variables.perfectParry) &&
 						!nbt.getBoolean(Variables.parry) &&
 						!nbt.getBoolean(Variables.lateParry)){
@@ -72,8 +71,8 @@ public class EventHandler{
 				}
 			}
 			//no damage reduction if DamageSource is PIERCING or BLEED
-			if (!Objects.equals(source, DamageSourceSomething.of(level, HmmmDamageTypes.PIERCING, null, null)) &&
-					!Objects.equals(source, DamageSourceSomething.of(level, HmmmDamageTypes.BLEED, null, null))) {
+			if (!Objects.equals(source, DamageSourceSomething.of(level, HmmmDamageTypes.PIERCING, source.getDirectEntity(), source.getEntity())) &&
+					!Objects.equals(source, DamageSourceSomething.of(level, HmmmDamageTypes.BLEED, source.getDirectEntity(), source.getEntity()))) {
 				if (!nbt.getBoolean(Variables.perfectParry) &&
 						nbt.getBoolean(Variables.parry) &&
 						!nbt.getBoolean(Variables.lateParry)){
@@ -111,9 +110,7 @@ public class EventHandler{
 		float amount = e.getAmount();
 		if (!source.isIndirect() && attacker != null && !source.is(HmmmDamageTypes.BLEED) && !source.is(HmmmDamageTypes.PIERCING)){
 			if (attacker instanceof LivingEntity living){
-				if (living.getMainHandItem().is(ItemTags.AXES)){
 
-				}
 			}
 		}
 	}

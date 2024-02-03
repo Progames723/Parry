@@ -19,7 +19,7 @@ public class BleedEffect extends MobEffect {
 					HmmmDamageTypes.BLEED,
 					null,
 					null
-			), 1.0f);
+			), 2.0f);
 		}
 	}
 	public boolean shouldApplyEffectTickThisTick(int i, int j) {

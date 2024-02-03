@@ -3,15 +3,16 @@ package dev.progames723.parry;
 import dev.architectury.event.events.common.PlayerEvent;
 import dev.architectury.event.events.common.TickEvent;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.enchantment.Enchantments;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Parry
-{
+public class Parry {
 	public static final String MOD_ID = "parry_this";
 	public static final Logger LOGGER = LoggerFactory.getLogger("Parry");
-	
 	public static void init() {
 		PlayerEvent.PLAYER_JOIN.register((player) -> {
 			Variables.initializeVar(player);

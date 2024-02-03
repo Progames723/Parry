@@ -5,6 +5,7 @@ import dev.progames723.hmmm.DamageSourceSomething;
 import dev.progames723.hmmm.HmmmDamageTypes;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffects;
@@ -39,7 +40,7 @@ public class EffectThing extends MobEffect {
 				.addAttributeModifier(Attributes.MOVEMENT_SPEED, "CBF164AE-3426-4E02-AAD1-020E36C2B2E9", 0.02, AttributeModifier.Operation.MULTIPLY_TOTAL);
 	}
 	@ExpectPlatform
-	public static boolean chanceForArmorReduction(LivingEntity entity, float amount, ItemStack item){
+	public static boolean chanceForArmorReduction(LivingEntity entity, DamageSource source, float amount, ItemStack item){
 		throw new RuntimeException(new ClassNotFoundException());
 	}
 	public static void damageBleed(Player player, Level level){
