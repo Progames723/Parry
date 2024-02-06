@@ -3,10 +3,7 @@ package dev.progames723.parry;
 import dev.architectury.event.events.common.PlayerEvent;
 import dev.architectury.event.events.common.TickEvent;
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.item.enchantment.Enchantments;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -114,8 +114,14 @@ public class Variables{
 			nbt.putBoolean(parry, false);
 			nbt.putBoolean(lateParry, false);
 		}
+		if (nbt.getInt(perfectParryTicks) != 0){
+			nbt.putInt(perfectParryTicks, 0);
+		}
 		if (nbt.getInt(parryTicks) != 0){
 			nbt.putInt(parryTicks, 0);
+		}
+		if (nbt.getInt(lateParryTicks) != 0){
+			nbt.putInt(lateParryTicks, 0);
 		}
 	}
 	public static void initializeVar(Player player){

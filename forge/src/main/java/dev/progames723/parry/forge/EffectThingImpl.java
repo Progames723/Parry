@@ -10,15 +10,15 @@ import net.minecraftforge.common.Tags;
 
 import java.util.Random;
 
-import static dev.progames723.parry.EffectThing.BROKEN_ARMOR;
+import static dev.progames723.parry.EffectThing.brokenArmorEffect;
 
 public class EffectThingImpl {
 	public static boolean chanceForArmorReduction(LivingEntity entity, DamageSource source, float amount, ItemStack item) {
-		int ampl = entity.getEffect(BROKEN_ARMOR).getAmplifier()+1;
+		int ampl = entity.getEffect(brokenArmorEffect).getAmplifier()+1;
 		double mult = 1;
 		Random random = new Random();
 		int h = random.nextInt(101);
-		if (entity.getEffect(BROKEN_ARMOR) != null){
+		if (entity.getEffect(brokenArmorEffect) != null){
 			if (ampl > 0){
 				double x = ampl * amount;
 				mult = (1 - (1 / (1 + (x) / 20.0))) * 10.0;

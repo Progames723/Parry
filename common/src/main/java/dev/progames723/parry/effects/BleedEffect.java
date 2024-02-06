@@ -13,7 +13,7 @@ public class BleedEffect extends MobEffect {
 	}
 	public void applyEffectTick(LivingEntity livingEntity, int i) {
 		super.applyEffectTick(livingEntity, i);
-		if (livingEntity.getEffect(EffectThing.BLEED) != null && livingEntity.getEffect(EffectThing.BLEED).getAmplifier() > 0) {
+		if (livingEntity.getEffect(EffectThing.bleedEffect) != null && livingEntity.getEffect(EffectThing.bleedEffect).getAmplifier() > 0) {
 			livingEntity.hurt(DamageSourceSomething.of(
 					livingEntity.level(),
 					HmmmDamageTypes.BLEED,

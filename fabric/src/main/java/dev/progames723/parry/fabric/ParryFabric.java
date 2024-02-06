@@ -1,6 +1,5 @@
 package dev.progames723.parry.fabric;
 
-import dev.progames723.hmmm.DamageSourceSomething;
 import dev.progames723.hmmm.HmmmDamageTypes;
 import dev.progames723.hmmm.fabric.event.LivingEvents;
 import dev.progames723.parry.Parry;
@@ -18,8 +17,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
-import java.util.Objects;
-
 public class ParryFabric implements ModInitializer {
     @Override
     public void onInitialize() {
@@ -27,8 +24,7 @@ public class ParryFabric implements ModInitializer {
         LivingEvents.BEFORE_LIVING_HURT.register((level, entity, source, amount) -> {
             if (entity instanceof Player player){
                 CompoundTag nbt = Variables.thisIsImportant(player);
-                if (!Objects.equals(source, DamageSourceSomething.of(level, HmmmDamageTypes.PIERCING, source.getDirectEntity(), source.getEntity())) &&
-                        !Objects.equals(source, DamageSourceSomething.of(level, HmmmDamageTypes.BLEED, source.getDirectEntity(), source.getEntity()))){
+                if (!source.is(HmmmDamageTypes.BLEED) && !source.is(HmmmDamageTypes.PIERCING)){
                     if (!nbt.getBoolean(Variables.perfectParry) &&
                             nbt.getBoolean(Variables.parry) &&
                             !nbt.getBoolean(Variables.lateParry)){
@@ -40,18 +36,19 @@ public class ParryFabric implements ModInitializer {
                         }
                         level.playSound(null, player.getOnPos(), SoundEvents.SHIELD_BLOCK, SoundSource.MASTER, 1, 1);
                         return number;
-                    } else if (!nbt.getBoolean(Variables.perfectParry) &&
-                            !nbt.getBoolean(Variables.parry) &&
-                            nbt.getBoolean(Variables.lateParry)){
-                        float number = (float) Math.pow(amount, 1.3)*1.5f;
-                        if (number > 400.0f){
-                            number = 400.0f;
-                        } else if (number < 0f) {
-                            number = 0f;
-                        }
-                        level.playSound(null, player.getOnPos(), SoundEvents.SHIELD_BREAK, SoundSource.MASTER, 1, 1);
-                        return number;
                     }
+                }
+                if (!nbt.getBoolean(Variables.perfectParry) &&
+                        !nbt.getBoolean(Variables.parry) &&
+                        nbt.getBoolean(Variables.lateParry)){
+                    float number = (float) Math.pow(amount, 1.3)*1.5f;
+                    if (number > 400.0f){
+                        number = 400.0f;
+                    } else if (number < 0f) {
+                        number = 0f;
+                    }
+                    level.playSound(null, player.getOnPos(), SoundEvents.SHIELD_BREAK, SoundSource.MASTER, 1, 1);
+                    return number;
                 }
             }
             return amount;
@@ -59,11 +56,12 @@ public class ParryFabric implements ModInitializer {
         LivingEvents.BEFORE_LIVING_HURT_CANCELLABLE.register((level, entity, source, amount) -> {
             if (entity instanceof Player player){
                 CompoundTag nbt = Variables.thisIsImportant(player);
-                if (!Objects.equals(source, DamageSourceSomething.of(level, HmmmDamageTypes.PIERCING, null, null))){
+                if (!source.is(HmmmDamageTypes.PIERCING)){
                     if (nbt.getBoolean(Variables.perfectParry) &&
                             !nbt.getBoolean(Variables.parry) &&
                             !nbt.getBoolean(Variables.lateParry)){
                         level.playSound(null, player.getOnPos(), SoundEvents.SHIELD_BLOCK, SoundSource.MASTER, 1, 1);
+                        player.setAbsorptionAmount(player.getAbsorptionAmount() + 2.0f);
                         return false;
                     }
                 }

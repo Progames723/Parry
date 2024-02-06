@@ -1,7 +1,7 @@
 package dev.progames723.parry.forge;
 
-import dev.progames723.hmmm.DamageSourceSomething;
 import dev.progames723.hmmm.HmmmDamageTypes;
+import dev.progames723.parry.EffectThing;
 import dev.progames723.parry.Variables;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvents;
@@ -9,6 +9,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -16,16 +17,11 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.Tags;
-import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
-import net.minecraftforge.event.entity.living.LivingDamageEvent;
-import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-
-import java.util.Objects;
 
 @Mod.EventBusSubscriber
 public class EventHandler{
@@ -62,7 +58,7 @@ public class EventHandler{
 			Level level = player.level();
 			CompoundTag nbt = Variables.thisIsImportant(player);
 			//you can still parry BLEED but not PIERCING
-			if (!Objects.equals(source, DamageSourceSomething.of(level, HmmmDamageTypes.PIERCING, source.getDirectEntity(), source.getEntity()))){
+			if (!source.is(HmmmDamageTypes.BLEED) && !source.is(HmmmDamageTypes.PIERCING)){
 				if (nbt.getBoolean(Variables.perfectParry) &&
 						!nbt.getBoolean(Variables.parry) &&
 						!nbt.getBoolean(Variables.lateParry)){
@@ -71,8 +67,7 @@ public class EventHandler{
 				}
 			}
 			//no damage reduction if DamageSource is PIERCING or BLEED
-			if (!Objects.equals(source, DamageSourceSomething.of(level, HmmmDamageTypes.PIERCING, source.getDirectEntity(), source.getEntity())) &&
-					!Objects.equals(source, DamageSourceSomething.of(level, HmmmDamageTypes.BLEED, source.getDirectEntity(), source.getEntity()))) {
+			if (!source.is(HmmmDamageTypes.BLEED) && !source.is(HmmmDamageTypes.PIERCING)) {
 				if (!nbt.getBoolean(Variables.perfectParry) &&
 						nbt.getBoolean(Variables.parry) &&
 						!nbt.getBoolean(Variables.lateParry)){
@@ -84,7 +79,9 @@ public class EventHandler{
 					}
 					level.playSound(null, player.getOnPos(), SoundEvents.SHIELD_BLOCK, SoundSource.MASTER, 1, 1);
 					e.setAmount(number);
-				} else if (!nbt.getBoolean(Variables.perfectParry) &&
+				}
+			} else {//damage is still increased from any DamageSource or DamageType
+				if (!nbt.getBoolean(Variables.perfectParry) &&
 						!nbt.getBoolean(Variables.parry) &&
 						nbt.getBoolean(Variables.lateParry)){
 					number = (float) Math.pow(amount, 1.3)*1.5f;
@@ -108,9 +105,28 @@ public class EventHandler{
 		DamageSource source = e.getSource();
 		Entity attacker = source.getDirectEntity();
 		float amount = e.getAmount();
-		if (!source.isIndirect() && attacker != null && !source.is(HmmmDamageTypes.BLEED) && !source.is(HmmmDamageTypes.PIERCING)){
-			if (attacker instanceof LivingEntity living){
-
+		if (attacker != null && !source.is(HmmmDamageTypes.BLEED) && !source.is(HmmmDamageTypes.PIERCING)){
+			if (attacker instanceof Player player){
+				if (EffectThing.chanceForArmorReduction(entity, source, amount, player.getMainHandItem())) {
+					player.giveExperiencePoints(5);
+					if (entity.getEffect(EffectThing.brokenArmorEffect) != null){
+						int duration = entity.getEffect(EffectThing.brokenArmorEffect).getDuration();
+						int amplifier = entity.getEffect(EffectThing.brokenArmorEffect).getAmplifier();
+						entity.forceAddEffect(new MobEffectInstance(EffectThing.brokenArmorEffect, duration+600, amplifier+1), entity);
+					} else {
+						entity.addEffect(new MobEffectInstance(EffectThing.brokenArmorEffect, 600, 0), entity);
+					}
+				}
+			} else if (attacker instanceof LivingEntity living) {
+				if (EffectThing.chanceForArmorReduction(entity, source, amount, living.getMainHandItem())) {
+					if (entity.getEffect(EffectThing.brokenArmorEffect) != null){
+						int duration = entity.getEffect(EffectThing.brokenArmorEffect).getDuration();
+						int amplifier = entity.getEffect(EffectThing.brokenArmorEffect).getAmplifier();
+						entity.forceAddEffect(new MobEffectInstance(EffectThing.brokenArmorEffect, duration+600, amplifier+1), entity);
+					} else {
+						entity.addEffect(new MobEffectInstance(EffectThing.brokenArmorEffect, 600, 0), entity);
+					}
+				}
 			}
 		}
 	}
