@@ -6,6 +6,7 @@ import dev.progames723.parry.Parry;
 import dev.progames723.parry.Variables;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
+import net.fabricmc.fabric.api.event.registry.DynamicRegistrySetupCallback;
 import net.fabricmc.fabric.api.tag.convention.v1.ConventionalItemTags;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvents;
@@ -90,6 +91,9 @@ public class ParryFabric implements ModInitializer {
                 }
             }
             return InteractionResultHolder.pass(player.getItemInHand(hand));
+        });
+        DynamicRegistrySetupCallback.EVENT.register((dynamicRegistryView) -> {
+            dynamicRegistryView.asDynamicRegistryManager();
         });
     }
 }

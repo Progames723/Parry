@@ -22,6 +22,8 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegisterEvent;
 
 @Mod.EventBusSubscriber
 public class EventHandler{
@@ -129,5 +131,9 @@ public class EventHandler{
 				}
 			}
 		}
+	}
+	@SubscribeEvent
+	public static void registerEvent(RegisterEvent e){
+
 	}
 }
