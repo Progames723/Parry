@@ -6,7 +6,7 @@ import net.minecraft.world.entity.player.Player;
 import static dev.progames723.parry.Parry.LOGGER;
 
 public class Variables{
-	protected Variables() {}
+	private Variables() {}
 	public static String perfectParry = "perfect_parry";//boolean
 	public static String parry = "parry";//boolean
 	public static String lateParry = "late_parry";//boolean
@@ -164,13 +164,6 @@ public class Variables{
 		nbt.putBoolean(lateParry, false);
 	}
 	public static void setTicks(Player player){
-		player.getCooldowns().addCooldown(player.getMainHandItem().getItem(), 20);
-		CompoundTag nbt = thisIsImportant(player);
-		nbt.putInt(Variables.perfectParryTicks, 3);
-		nbt.putInt(Variables.parryTicks, 8);
-		nbt.putInt(Variables.lateParryTicks, 9);
-		nbt.putBoolean(perfectParry, true);
-		nbt.putBoolean(parry, false);
-		nbt.putBoolean(lateParry, false);
+		setTicks(player, 3, 8, 9);
 	}
 }

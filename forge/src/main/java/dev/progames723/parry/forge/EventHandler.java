@@ -55,6 +55,9 @@ public class EventHandler{
 		LivingEntity entity = e.getEntity();
 		DamageSource source = e.getSource();
 		float amount = e.getAmount();
+		if (EffectThing.chanceForArmorReduction(entity, source, amount, source.getEntity())){
+			EffectThing.applyArmorReduction(entity);
+		}
 		if (entity instanceof Player player){
 			float number = 0f;
 			Level level = player.level();
@@ -74,9 +77,7 @@ public class EventHandler{
 						nbt.getBoolean(Variables.parry) &&
 						!nbt.getBoolean(Variables.lateParry)){
 					number = (float) Math.pow(amount, 0.25) + (float) Math.pow(amount, 0.875)*0.12f;
-					if (number > 200.0f){
-						number = 200.0f;
-					} else if (number < 0f) {
+					if (number < 0f) {
 						number = 0f;
 					}
 					level.playSound(null, player.getOnPos(), SoundEvents.SHIELD_BLOCK, SoundSource.MASTER, 1, 1);
@@ -87,9 +88,7 @@ public class EventHandler{
 						!nbt.getBoolean(Variables.parry) &&
 						nbt.getBoolean(Variables.lateParry)){
 					number = (float) Math.pow(amount, 1.3)*1.5f;
-					if (number > 400.0f){
-						number = 400.0f;
-					} else if (number < 0f) {
+					if (number < 0f) {
 						number = 0f;
 					}
 					level.playSound(null, player.getOnPos(), SoundEvents.SHIELD_BLOCK, SoundSource.MASTER, 1, 1);
@@ -100,40 +99,5 @@ public class EventHandler{
 				e.setCanceled(true);
 			}
 		}
-	}
-	@SubscribeEvent
-	public static void attackLiving(LivingAttackEvent e) {
-		LivingEntity entity = e.getEntity();
-		DamageSource source = e.getSource();
-		Entity attacker = source.getDirectEntity();
-		float amount = e.getAmount();
-		if (attacker != null && !source.is(HmmmDamageTypes.BLEED) && !source.is(HmmmDamageTypes.PIERCING)){
-			if (attacker instanceof Player player){
-				if (EffectThing.chanceForArmorReduction(entity, source, amount, player.getMainHandItem())) {
-					player.giveExperiencePoints(5);
-					if (entity.getEffect(EffectThing.brokenArmorEffect) != null){
-						int duration = entity.getEffect(EffectThing.brokenArmorEffect).getDuration();
-						int amplifier = entity.getEffect(EffectThing.brokenArmorEffect).getAmplifier();
-						entity.forceAddEffect(new MobEffectInstance(EffectThing.brokenArmorEffect, duration+600, amplifier+1), entity);
-					} else {
-						entity.addEffect(new MobEffectInstance(EffectThing.brokenArmorEffect, 600, 0), entity);
-					}
-				}
-			} else if (attacker instanceof LivingEntity living) {
-				if (EffectThing.chanceForArmorReduction(entity, source, amount, living.getMainHandItem())) {
-					if (entity.getEffect(EffectThing.brokenArmorEffect) != null){
-						int duration = entity.getEffect(EffectThing.brokenArmorEffect).getDuration();
-						int amplifier = entity.getEffect(EffectThing.brokenArmorEffect).getAmplifier();
-						entity.forceAddEffect(new MobEffectInstance(EffectThing.brokenArmorEffect, duration+600, amplifier+1), entity);
-					} else {
-						entity.addEffect(new MobEffectInstance(EffectThing.brokenArmorEffect, 600, 0), entity);
-					}
-				}
-			}
-		}
-	}
-	@SubscribeEvent
-	public static void registerEvent(RegisterEvent e){
-
 	}
 }

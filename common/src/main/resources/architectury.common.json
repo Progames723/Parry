@@ -1,0 +1,5 @@
+{
+  "injected_interfaces": {
+    "net/minecraft/class_8109": ["dev/progames723/parry/interface_injection/ExtDamageSources"]
+  }
+}
